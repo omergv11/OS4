@@ -14,13 +14,11 @@ main(int argc, char *argv[])
     exit(1);
   }
   if(argc == 4 && !strcmp(argv[1],"-s")){
-    char* oldp = argv[2];
-    char* newp = argv[3];
-    if(symlink(oldp, newp) != 0){
-      fprintf(2, "symlink %s %s: failed\n", oldp, newp);
+    char* old = argv[2];
+    char* new = argv[3];
+    if(symlink(old, new) != 0){
+      fprintf(2, "symlink %s %s: failed\n", old, new);
     }
   }
-
-
   exit(0);
 }
