@@ -378,10 +378,8 @@ static uint
 bmap(struct inode *ip, uint bn)
 {
 
-  uint *da; //ch
-  struct buf *bdp; //ch
-  uint addr, *a;
-  struct buf *bp;
+  uint *da, *a, addr; //ch
+  struct buf *bdp, *bp; //ch
 
   if(bn < NDIRECT){
     if((addr = ip->addrs[bn]) == 0)

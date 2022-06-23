@@ -18,7 +18,7 @@
 int MAX_DEREFERENCE = 31;
 //uint64 readlink(char* pathname, uint64 addr, int bufsize);
 struct inode* dereference_link(struct inode* ip, char* buff);
-uint readlink(char* pathname, uint64 addr, int bufsize);
+int readlink(char* pathname, uint64 addr, int bufsize);
 
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
@@ -326,13 +326,13 @@ sys_open(void)
       return -1;
     }
   }
-    if(ip->type == T_SYMLINK && (omode != O_NOFOLLOW))
+  if(ip->type == T_SYMLINK && (omode != O_NOFOLLOW))
   {
-      if ((ip = dereference_link(ip, path)) == 0)
-      {
-          end_op();
-          return -1;
-      }
+    if ((ip = dereference_link(ip, path)) == 0)
+    {
+      end_op();
+      return -1;
+    }
   }
   if(ip->type == T_DEVICE && (ip->major < 0 || ip->major >= NDEV)){
     iunlockput(ip);
@@ -561,7 +561,7 @@ sys_symlink(void)
 
 
 
-uint readlink(char* pathname, uint64 addr, int bufsize){
+int readlink(char* pathname, uint64 addr, int bufsize){
   struct inode *ip;
   char buffer[bufsize];
   struct proc* p = myproc();
@@ -607,26 +607,26 @@ sys_readlink(void)
 // must hold the lock of the link
 struct inode* dereference_link(struct inode* ip, char* buff)
 {
-    int count = MAX_DEREFERENCE;
-    struct inode* output = ip;
-    while(output->type == T_SYMLINK){
-        count--;
-        if(!count)
-        {
-          iunlock(output);
-          return 0;
-        }
-        if(readi(output, 0, (uint64)buff, 0, output->size) < 0)
-        {
-          iunlock(output);
-          return 0;
-        }
-
+  int count = MAX_DEREFERENCE;
+  struct inode* output = ip;
+  while(output->type == T_SYMLINK){
+      count--;
+      if(!count)
+      {
         iunlock(output);
-        if ((output = namei(buff)) == 0)
-            return 0;
+        return 0;
+      }
+      if(readi(output, 0, (uint64)buff, 0, output->size) < 0)
+      {
+        iunlock(output);
+        return 0;
+      }
 
-        ilock(output);
-    }
-    return output;
+      iunlock(output);
+      if ((output = namei(buff)) == 0)
+          return 0;
+
+      ilock(output);
+  }
+  return output;
 }
