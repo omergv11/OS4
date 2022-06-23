@@ -377,6 +377,9 @@ iunlockput(struct inode *ip)
 static uint
 bmap(struct inode *ip, uint bn)
 {
+
+  uint *da; //ch
+  struct buf *bdp; //ch
   uint addr, *a;
   struct buf *bp;
 
@@ -410,21 +413,22 @@ bmap(struct inode *ip, uint bn)
     a = (uint*)bp->data;
 
     // load 2nd layer block.
-    uint double_index = bn / NINDIRECT;
+    uint double_index = bn / NINDIRECT; //index of the third layer
     if((addr = a[double_index]) == 0){
       a[double_index] = addr = balloc(ip->dev);
       log_write(bp);
     }
-    brelse(bp);
+    //brelse(bp);
 
     // now find disk block.
-    bp = bread(ip->dev, addr);
-    a = (uint*)bp->data;
+    bdp = bread(ip->dev, addr);
+    da = (uint*)bdp->data; //block data
     uint pos = bn % NINDIRECT;
-    if ((addr = a[pos]) == 0) {
-      a[pos] = addr = balloc(ip->dev);
+    if ((addr = da[pos]) == 0) {
+      da[pos] = addr = balloc(ip->dev);
       log_write(bp);
     }
+    brelse(bdp);
     brelse(bp);
     return addr;
   }
