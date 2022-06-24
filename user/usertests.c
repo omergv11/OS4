@@ -2833,7 +2833,7 @@ main(int argc, char *argv[])
     {reparent2, "reparent2"},
     {pgbug, "pgbug" },
     {sbrkbugs, "sbrkbugs" },
-    // {badwrite, "badwrite" },
+    {badwrite, "badwrite" },
     {badarg, "badarg" },
     {reparent, "reparent" },
     {twochildren, "twochildren"},
@@ -2864,7 +2864,7 @@ main(int argc, char *argv[])
     {stacktest, "stacktest"},
     {opentest, "opentest"},
     {writetest, "writetest"},
-    //{writebig, "writebig"},
+    {writebig, "writebig"},
     {createtest, "createtest"},
     {openiputtest, "openiput"},
     {exitiputtest, "exitiput"},
@@ -2880,7 +2880,7 @@ main(int argc, char *argv[])
     {dirfile, "dirfile"},
     {iref, "iref"},
     {forktest, "forktest"},
-    {bigdir, "bigdir"}, // slow
+    //{bigdir, "bigdir"}, // slow
     { 0, 0},
   };
 
