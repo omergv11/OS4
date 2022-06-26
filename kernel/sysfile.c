@@ -599,16 +599,14 @@ struct inode* dereference_link(struct inode* ip, char* buff)
 {
   int i =0;
   struct inode* outip = ip;
-  //ilock(outip); ***FIX LOCK
   for(i=0; i<MAX_DEREFERENCE; i++){
-    if (outip->type == T_SYMLINK)
+    if (outip->type != T_SYMLINK)
       break;
 
     if(readi(outip, 0, (uint64)buff, 0, outip->size) < 0){
       iunlock(outip);
       return 0;
     }
-
     iunlock(outip);
     if ((outip = namei(buff)) == 0)
         return 0;
@@ -619,6 +617,5 @@ struct inode* dereference_link(struct inode* ip, char* buff)
     iunlock(outip);
     return 0;
   }
-  iunlock(outip);
   return outip;
 }
